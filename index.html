@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-page-anim="slide">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline' blob: https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' blob: data:; frame-src 'self' blob:;" />
+  
+  <title>PageTurn — Modern EPUB Reader</title>
+  <meta name="description" content="PageTurn is a modern, feature-rich EPUB reader with beautiful themes, bookmarks, search, and a premium reading experience." />
+  <meta name="theme-color" content="#6366F1" />
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>" />
+  <link rel="stylesheet" href="/src/styles/index.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- ===== Toolbar ===== -->
+    <header id="toolbar">
+      <div class="toolbar-section toolbar-left">
+        <button id="btn-sidebar-toggle" class="icon-btn" title="Toggle sidebar (Ctrl+B)" aria-label="Toggle sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <button id="btn-open-file" class="icon-btn" title="Open EPUB file (Ctrl+O)" aria-label="Open file">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        </button>
+      </div>
+
+      <div class="toolbar-section toolbar-center" id="toolbar-book-info" style="display:none;">
+        <span class="book-title-display" id="display-title"></span>
+        <span class="book-author-display" id="display-author"></span>
+      </div>
+
+      <div class="toolbar-section toolbar-right">
+        <button id="btn-bookmark" class="icon-btn" title="Toggle bookmark (Ctrl+D)" aria-label="Bookmark" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        </button>
+        <button id="btn-settings" class="icon-btn" title="Settings (Ctrl+,)" aria-label="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </button>
+        <button id="btn-fullscreen" class="icon-btn" title="Fullscreen (F11)" aria-label="Fullscreen" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== Sidebar ===== -->
+    <aside id="sidebar" class="collapsed">
+      <nav class="sidebar-tabs" role="tablist">
+        <button class="sidebar-tab active" data-tab="toc" role="tab" aria-selected="true" id="tab-toc">Contents</button>
+        <button class="sidebar-tab" data-tab="bookmarks" role="tab" aria-selected="false" id="tab-bookmarks">Bookmarks</button>
+        <button class="sidebar-tab" data-tab="search" role="tab" aria-selected="false" id="tab-search">Search</button>
+      </nav>
+
+      <!-- TOC Panel -->
+      <div class="sidebar-panel active" data-panel="toc" id="panel-toc" role="tabpanel">
+        <div class="sidebar-panel-content" id="toc-content">
+          <div class="empty-state">
+            <div class="empty-state-icon">📑</div>
+            <div class="empty-state-text">Open a book to see its contents</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bookmarks Panel -->
+      <div class="sidebar-panel" data-panel="bookmarks" id="panel-bookmarks" role="tabpanel">
+        <div class="sidebar-panel-content" id="bookmarks-content">
+          <div class="empty-state">
+            <div class="empty-state-icon">🔖</div>
+            <div class="empty-state-text">No bookmarks yet</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Panel -->
+      <div class="sidebar-panel" data-panel="search" id="panel-search" role="tabpanel">
+        <div class="sidebar-panel-content">
+          <div class="search-input-wrapper">
+            <span class="search-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+            <input type="text" class="search-input" id="search-input" placeholder="Search in book..." autocomplete="off" />
+          </div>
+          <div class="search-nav" id="search-nav" style="display: none;">
+            <button class="search-nav-btn" id="btn-search-prev" title="Previous result">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="search-nav-position" id="search-position">0 results</span>
+            <button class="search-nav-btn" id="btn-search-next" title="Next result">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="search-nav-btn search-nav-back" id="btn-search-back" title="Back to reading position" style="display: none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="11 17 6 12 11 7"/><line x1="6" y1="12" x2="20" y2="12"/></svg>
+              Back
+            </button>
+          </div>
+          <div id="search-results">
+            <div class="empty-state">
+              <div class="empty-state-icon">🔍</div>
+              <div class="empty-state-text">Type to search within the book</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== Main Content ===== -->
+    <main id="main-content">
+      <!-- Landing View -->
+      <div id="landing-view">
+        <div class="drop-zone" id="drop-zone">
+          <div class="drop-zone-icon animate-float">📖</div>
+          <h1 class="drop-zone-title">Welcome to PageTurn</h1>
+          <p class="drop-zone-subtitle">Drop an EPUB file here or click to browse</p>
+          <button class="btn-primary" id="btn-browse">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Open EPUB File
+          </button>
+          <input type="file" id="file-input" accept=".epub,application/epub+zip" />
+        </div>
+
+        <section class="library-section" id="library-section" style="display:none;">
+          <div class="library-header">
+            <h2 class="library-title">Recent Books</h2>
+            <button class="btn-secondary" id="btn-clear-library">Clear All</button>
+          </div>
+          <div class="library-grid" id="library-grid"></div>
+        </section>
+      </div>
+
+      <!-- Reader View -->
+      <div id="reader-view">
+        <div id="reader-container">
+          <button class="nav-arrow" id="nav-prev" title="Previous page (←)" aria-label="Previous page">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div id="viewer"></div>
+          <button class="nav-arrow" id="nav-next" title="Next page (→)" aria-label="Next page">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <div class="page-bookmark-ribbon" id="page-bookmark-ribbon" title="Click to toggle bookmark"></div>
+        </div>
+
+        <div id="progress-container">
+          <div id="progress-bar-wrapper" title="Click to jump to position">
+            <div id="progress-bar-fill"></div>
+          </div>
+          <span id="progress-text">0%</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== Settings Panel ===== -->
+    <div id="settings-panel">
+      <div class="settings-header">
+        <span class="settings-title">Reading Settings</span>
+        <button class="icon-btn" id="btn-close-settings" title="Close settings" aria-label="Close settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Theme</div>
+        <div class="theme-grid" id="theme-grid">
+          <button class="theme-option active" data-theme-value="light">
+            <div class="theme-swatch" data-swatch="light"></div>
+            <span>Light</span>
+          </button>
+          <button class="theme-option" data-theme-value="dark">
+            <div class="theme-swatch" data-swatch="dark"></div>
+            <span>Dark</span>
+          </button>
+          <button class="theme-option" data-theme-value="sepia">
+            <div class="theme-swatch" data-swatch="sepia"></div>
+            <span>Sepia</span>
+          </button>
+          <button class="theme-option" data-theme-value="ocean">
+            <div class="theme-swatch" data-swatch="ocean"></div>
+            <span>Ocean</span>
+          </button>
+          <button class="theme-option" data-theme-value="forest">
+            <div class="theme-swatch" data-swatch="forest"></div>
+            <span>Forest</span>
+          </button>
+          <button class="theme-option" data-theme-value="rose">
+            <div class="theme-swatch" data-swatch="rose"></div>
+            <span>Rose</span>
+          </button>
+          <button class="theme-option" data-theme-value="lavender">
+            <div class="theme-swatch" data-swatch="lavender"></div>
+            <span>Lavender</span>
+          </button>
+          <button class="theme-option" data-theme-value="nord">
+            <div class="theme-swatch" data-swatch="nord"></div>
+            <span>Nord</span>
+          </button>
+          <button class="theme-option" data-theme-value="high-contrast">
+            <div class="theme-swatch" data-swatch="high-contrast"></div>
+            <span>Contrast</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Page Turn Animation</div>
+        <div class="anim-selector" id="anim-selector">
+          <button class="anim-option active" data-anim="slide">
+            <div class="anim-preview"></div>
+            <span>Slide</span>
+          </button>
+          <button class="anim-option" data-anim="fade">
+            <div class="anim-preview"></div>
+            <span>Fade</span>
+          </button>
+          <button class="anim-option" data-anim="flip">
+            <div class="anim-preview"></div>
+            <span>Flip</span>
+          </button>
+          <button class="anim-option" data-anim="scale">
+            <div class="anim-preview"></div>
+            <span>Scale</span>
+          </button>
+          <button class="anim-option" data-anim="curl">
+            <div class="anim-preview"></div>
+            <span>Curl</span>
+          </button>
+          <button class="anim-option" data-anim="none">
+            <div class="anim-preview"></div>
+            <span>None</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Font Family</div>
+        <div class="font-selector" id="font-selector">
+          <button class="font-option active" data-font="sans">Sans-serif</button>
+          <button class="font-option" data-font="serif">Serif</button>
+          <button class="font-option" data-font="mono">Monospace</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Typography</div>
+        <div class="slider-control">
+          <div class="slider-label">
+            <span class="slider-label-text">Font Size</span>
+            <span class="slider-value" id="font-size-value">100%</span>
+          </div>
+          <input type="range" id="font-size-slider" min="70" max="160" value="100" step="5" />
+        </div>
+        <div class="slider-control">
+          <div class="slider-label">
+            <span class="slider-label-text">Line Height</span>
+            <span class="slider-value" id="line-height-value">1.6</span>
+          </div>
+          <input type="range" id="line-height-slider" min="1.2" max="2.4" value="1.6" step="0.1" />
+        </div>
+        <div class="slider-control">
+          <div class="slider-label">
+            <span class="slider-label-text">Content Width</span>
+            <span class="slider-value" id="content-width-value">700px</span>
+          </div>
+          <input type="range" id="content-width-slider" min="500" max="1100" value="700" step="50" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Overlay Backdrop ===== -->
+    <div class="overlay-backdrop" id="overlay-backdrop"></div>
+
+    <!-- ===== Loading Overlay ===== -->
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="loading-spinner"></div>
+      <div class="loading-text" id="loading-text">Loading book...</div>
+    </div>
+
+    <!-- ===== Toast Container ===== -->
+    <div class="toast-container" id="toast-container"></div>
+  </div>
+
+  <script type="module" src="/src/js/app.js"></script>
+</body>
+</html>

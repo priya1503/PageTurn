@@ -1,0 +1,275 @@
+/* ============================================
+   EPUB Reader — Animations
+   ============================================ */
+
+/* ---- Keyframes ---- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInDown {
+  from { transform: translateY(-12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes toastIn {
+  from {
+    transform: translateX(100%) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes toastOut {
+  from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes dropZonePulse {
+  0% { border-color: var(--clr-accent); }
+  50% { border-color: var(--clr-accent-hover); box-shadow: 0 0 24px var(--clr-accent-glow); }
+  100% { border-color: var(--clr-accent); }
+}
+
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* ---- Utility Classes ---- */
+.animate-fade-in {
+  animation: fadeIn var(--duration-normal) var(--ease-out);
+}
+
+.animate-slide-up {
+  animation: slideInUp var(--duration-normal) var(--ease-out);
+}
+
+.animate-slide-left {
+  animation: slideInLeft var(--duration-normal) var(--ease-out);
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--duration-normal) var(--ease-out);
+}
+
+.animate-float {
+  animation: floatUp 3s ease-in-out infinite;
+}
+
+/* ---- Skeleton Loading ---- */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--clr-bg-secondary) 25%,
+    var(--clr-bg-tertiary) 50%,
+    var(--clr-bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-text {
+  height: 12px;
+  margin-bottom: var(--space-2);
+  width: 80%;
+}
+
+.skeleton-text:last-child {
+  width: 60%;
+}
+
+/* ============================================
+   PAGE TURN ANIMATIONS
+   ============================================ */
+
+/* ---- Animation: Slide ---- */
+@keyframes slidePageNext {
+  0%   { transform: translateX(0);     opacity: 1; }
+  35%  { transform: translateX(-60px); opacity: 0.2; }
+  50%  { transform: translateX(40px);  opacity: 0; }
+  65%  { transform: translateX(40px);  opacity: 0.2; }
+  100% { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes slidePagePrev {
+  0%   { transform: translateX(0);     opacity: 1; }
+  35%  { transform: translateX(60px);  opacity: 0.2; }
+  50%  { transform: translateX(-40px); opacity: 0; }
+  65%  { transform: translateX(-40px); opacity: 0.2; }
+  100% { transform: translateX(0);     opacity: 1; }
+}
+
+/* Slide animation class */
+[data-page-anim="slide"] .page-turn-next #viewer {
+  animation: slidePageNext 500ms var(--ease-out) forwards;
+}
+
+[data-page-anim="slide"] .page-turn-prev #viewer {
+  animation: slidePagePrev 500ms var(--ease-out) forwards;
+}
+
+/* ---- Animation: Fade ---- */
+@keyframes fadePageOut {
+  0%   { opacity: 1; }
+  40%  { opacity: 0; }
+  60%  { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+[data-page-anim="fade"] .page-turn-next #viewer,
+[data-page-anim="fade"] .page-turn-prev #viewer {
+  animation: fadePageOut 450ms ease-in-out forwards;
+}
+
+/* ---- Animation: Flip (3D book page flip) ---- */
+@keyframes flipPageNext {
+  0%   { transform: perspective(1200px) rotateY(0deg);   opacity: 1; }
+  40%  { transform: perspective(1200px) rotateY(-12deg);  opacity: 0.6; }
+  50%  { transform: perspective(1200px) rotateY(-15deg);  opacity: 0.3; }
+  60%  { transform: perspective(1200px) rotateY(8deg);    opacity: 0.6; }
+  100% { transform: perspective(1200px) rotateY(0deg);   opacity: 1; }
+}
+
+@keyframes flipPagePrev {
+  0%   { transform: perspective(1200px) rotateY(0deg);   opacity: 1; }
+  40%  { transform: perspective(1200px) rotateY(12deg);   opacity: 0.6; }
+  50%  { transform: perspective(1200px) rotateY(15deg);   opacity: 0.3; }
+  60%  { transform: perspective(1200px) rotateY(-8deg);   opacity: 0.6; }
+  100% { transform: perspective(1200px) rotateY(0deg);   opacity: 1; }
+}
+
+[data-page-anim="flip"] .page-turn-next #viewer {
+  animation: flipPageNext 550ms var(--ease-in-out) forwards;
+  transform-origin: left center;
+}
+
+[data-page-anim="flip"] .page-turn-prev #viewer {
+  animation: flipPagePrev 550ms var(--ease-in-out) forwards;
+  transform-origin: right center;
+}
+
+/* ---- Animation: Scale (zoom out/in) ---- */
+@keyframes scalePageNext {
+  0%   { transform: scale(1);    opacity: 1; }
+  40%  { transform: scale(0.92); opacity: 0.2; }
+  60%  { transform: scale(0.92); opacity: 0.2; }
+  100% { transform: scale(1);    opacity: 1; }
+}
+
+[data-page-anim="scale"] .page-turn-next #viewer,
+[data-page-anim="scale"] .page-turn-prev #viewer {
+  animation: scalePageNext 480ms var(--ease-out) forwards;
+}
+
+/* ---- Animation: Curl (diagonal curl) ---- */
+@keyframes curlPageNext {
+  0%   { transform: perspective(1000px) rotateY(0deg) rotateX(0deg);    opacity: 1; }
+  30%  { transform: perspective(1000px) rotateY(-6deg) rotateX(2deg);   opacity: 0.7; box-shadow: -8px 4px 20px rgba(0,0,0,0.15); }
+  50%  { transform: perspective(1000px) rotateY(-10deg) rotateX(3deg);  opacity: 0.3; box-shadow: -12px 6px 30px rgba(0,0,0,0.2); }
+  70%  { transform: perspective(1000px) rotateY(4deg) rotateX(-1deg);   opacity: 0.7; box-shadow: 4px -2px 12px rgba(0,0,0,0.1); }
+  100% { transform: perspective(1000px) rotateY(0deg) rotateX(0deg);    opacity: 1; box-shadow: none; }
+}
+
+@keyframes curlPagePrev {
+  0%   { transform: perspective(1000px) rotateY(0deg) rotateX(0deg);    opacity: 1; }
+  30%  { transform: perspective(1000px) rotateY(6deg) rotateX(2deg);    opacity: 0.7; box-shadow: 8px 4px 20px rgba(0,0,0,0.15); }
+  50%  { transform: perspective(1000px) rotateY(10deg) rotateX(3deg);   opacity: 0.3; box-shadow: 12px 6px 30px rgba(0,0,0,0.2); }
+  70%  { transform: perspective(1000px) rotateY(-4deg) rotateX(-1deg);  opacity: 0.7; box-shadow: -4px -2px 12px rgba(0,0,0,0.1); }
+  100% { transform: perspective(1000px) rotateY(0deg) rotateX(0deg);    opacity: 1; box-shadow: none; }
+}
+
+[data-page-anim="curl"] .page-turn-next #viewer {
+  animation: curlPageNext 600ms var(--ease-in-out) forwards;
+  transform-origin: left center;
+}
+
+[data-page-anim="curl"] .page-turn-prev #viewer {
+  animation: curlPagePrev 600ms var(--ease-in-out) forwards;
+  transform-origin: right center;
+}
+
+/* ---- No animation ---- */
+[data-page-anim="none"] .page-turn-next #viewer,
+[data-page-anim="none"] .page-turn-prev #viewer {
+  animation: none;
+}
+
+/* ---- Drop zone animated border ---- */
+.drop-zone.drag-over {
+  animation: dropZonePulse 1.5s ease-in-out infinite;
+}
+
+/* ---- Stagger children animation ---- */
+.stagger-children > * {
+  animation: slideInUp var(--duration-normal) var(--ease-out) both;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 300ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 350ms; }
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,82 @@
+/* ============================================
+   EPUB Reader — Reader Viewport Styles
+   ============================================ */
+
+/* ---- Reader iframe overrides ---- */
+#viewer iframe {
+  border: none !important;
+}
+
+/* ---- Chapter heading indicator ---- */
+.chapter-indicator {
+  position: absolute;
+  top: var(--space-3);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-1) var(--space-4);
+  background: var(--clr-bg-glass);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  color: var(--clr-text-tertiary);
+  z-index: var(--z-base);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-normal) ease;
+}
+
+.chapter-indicator.visible {
+  opacity: 1;
+}
+
+/* ---- Page number ---- */
+.page-indicator {
+  position: absolute;
+  bottom: var(--space-3);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+/* ---- Bookmark ribbon on current page ---- */
+.page-bookmark-ribbon {
+  position: absolute;
+  top: 0;
+  right: var(--space-6);
+  width: 28px;
+  height: 40px;
+  background: var(--clr-bookmark);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%);
+  z-index: var(--z-base);
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: all var(--duration-normal) var(--ease-spring);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  cursor: pointer;
+}
+
+.page-bookmark-ribbon.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- Highlight colors ---- */
+.epub-highlight-yellow {
+  background-color: rgba(250, 204, 21, 0.35) !important;
+}
+
+.epub-highlight-green {
+  background-color: rgba(34, 197, 94, 0.3) !important;
+}
+
+.epub-highlight-blue {
+  background-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+.epub-highlight-pink {
+  background-color: rgba(244, 114, 182, 0.3) !important;
+}

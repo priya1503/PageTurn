@@ -1,0 +1,11 @@
+/* ============================================
+   EPUB Reader — Master Stylesheet
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import './variables.css';
+@import './layout.css';
+@import './components.css';
+@import './reader.css';
+@import './animations.css';
